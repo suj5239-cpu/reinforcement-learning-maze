@@ -1,0 +1,6 @@
+StartRoom,Steps,Route
+1,2,1 -> 5 -> EXIT
+2,1,2 -> EXIT
+3,3,3 -> 4 -> 2 -> EXIT
+4,2,4 -> 2 -> EXIT
+5,1,5 -> EXIT
