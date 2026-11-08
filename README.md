@@ -59,7 +59,7 @@ All recorded runs produced shortest routes from the five non-exit starting rooms
 - [Summary data](results/experiments/summary.csv)
 - [Individual run data](results/experiments/raw_runs.csv)
 
-These files document the earlier implementation. Commands such as `run_demo`, `run_experiments`, and `test_maze` in that report refer to the previous version and are not available in the current repository. The current single-file script runs one setting at a time and does not regenerate the full comparison report.
+These files document the earlier implementation. Commands such as `run_demo`, `run_experiments`, and `test_maze` in that report refer to the previous version and are not available in the current repository.
 
 ## Scope
 
