@@ -1,77 +1,72 @@
-# Reinforcement Learning: Maze Example
+# Q-learning Maze in MATLAB
 
-A Q-learning implementation in MATLAB.
+A course project implementing tabular Q-learning in a six-state maze.
 
-This repository presents a project from **Introduction to AI (인공지능개론)**,
-taken at **Ewha Womans University in Spring 2026 (2026학년도 1학기)**,
-taught by Prof. Hyunggon Park.
+Developed for **Introduction to AI**, taught by Prof. Hyunggon Park at **Ewha Womans University, Spring 2026**. The environment and reference Q-table are based on the course’s Chapter 18 reinforcement learning exercise.
 
-The project is based on the six-state Q-learning maze exercise in Chapter 18:
-Reinforcement Learning. This repository documents its MATLAB implementation
-and follow-up experiments comparing update budgets and learning rates.
-The executable code is a single script: [`maze_qlearning.m`](maze_qlearning.m).
+## Overview
 
-## Run one experiment
+The project explores how Q-learning updates action values and uses them to select a route to an exit. The current implementation is a single MATLAB script, [`maze_qlearning.m`](maze_qlearning.m), with adjustable learning rate, update count, and random seed.
 
-Upload `maze_qlearning.m` to MATLAB Online, open it, and change the settings
-at the top of the file:
+Each run:
+
+- Initializes a zero Q-table and performs the specified number of updates.
+- Prints the learned Q-table.
+- Reports the maximum error against the course reference table when `gamma = 0.8`.
+- Extracts a greedy route from the selected starting room.
+- Displays a Q-table heatmap.
+
+## How to Run
+
+Open `maze_qlearning.m` in MATLAB or upload it to MATLAB Online. Only base MATLAB is required.
+
+Adjust the settings at the top of the script:
 
 ```matlab
-nUpdates = 1000; % 100 or 1000
-alpha = 0.5;     % 0.1, 0.5, or 1.0
+nUpdates = 1000; % Number of individual Q-value updates
+alpha = 0.5;     % Learning rate
+gamma = 0.8;     % Discount factor
+seed = 42;      % Random seed
+startRoom = 3;  % Starting room for route extraction
 ```
 
-Click **Run**. Each run starts from an all-zero Q-table, prints the learned
-table, maximum Q error and greedy route, and displays a Q-table heatmap.
-Only base MATLAB is required. The script runs one setting at a time and
-does not automatically save files or overwrite the results included here.
+Click **Run**. Each execution resets the Q-table and random seed. The script displays results without automatically saving files.
 
-Change one setting, then run again to compare. Keep `seed` fixed for a fair
-comparison with the same sampled transitions. Change it when you want another
-random trial. The default is seed 42. The report below averages five seeds;
-a single run is not expected to equal that average.
+To compare settings, try `nUpdates = 100` or `1000` and `alpha = 0.1`, `0.5`, or `1.0`. Keeping the seed fixed preserves the sampled transition sequence across learning-rate comparisons. Changing `startRoom` changes the route being evaluated, not the training procedure.
 
-## How the code works
+## Learning Procedure
 
-1. Define the reward matrix `R` and initialize `Q`.
-2. Randomly select a room and one legal destination.
-3. Update `Q(s,a)` using the reward and best future Q-value.
-4. Repeat for `nUpdates`, then follow the greedy route from `startRoom`.
+At each update, the script randomly selects a state and one legal action, then applies:
 
-Room 6 is EXIT. `R=-1` marks unavailable actions, which are excluded from
-both sampling and maximization. In this lecture convention, moving to EXIT
-from room 2 or 5 earns 100; staying at EXIT also earns 100. With gamma=0.8,
-the optimal EXIT value is `100/(1-0.8)=500`. Training includes EXIT transitions;
-route extraction stops on arrival at EXIT. One update is not a full episode.
+```matlab
+target = R(s,a) + gamma * max(Q(a,nextActions));
+Q(s,a) = Q(s,a) + alpha * (target - Q(s,a));
+```
 
-The printed `maxQError` uses the lecture reference table and is evaluated only
-when gamma=0.8. A small cycle check prevents an undertrained greedy policy from
-looping forever. A displayed route is a learned greedy route, not a guarantee
-of optimality for arbitrary settings.
+One update changes one Q-value; it is **not a complete episode**. Unavailable actions are marked by `R = -1` and excluded from both sampling and maximization.
 
-## Completed experiment
+Room 6 is EXIT. Under the course convention, entering EXIT from room 2 or 5 earns 100, and staying at EXIT also earns 100. Training therefore includes transitions from EXIT. With `gamma = 0.8`, its optimal self-loop value is `100 / (1 - 0.8) = 500`.
 
-![Comparison of six conditions](results/experiments/comparison.png)
+Route extraction follows the highest-valued legal action and stops upon reaching EXIT or detecting a repeated state. An undertrained policy may fail to reach EXIT.
 
-The previously completed experiment used 100/1000 updates, alpha=0.1/0.5/1.0,
-and five seeds per condition. All 30 runs found shortest routes from every
-starting room, while Q-value accuracy varied substantially.
+## Earlier Experiment Results
 
-- [Full experiment report](docs/experiments.md)
-- [Original MATLAB result table](results/experiments/results.md)
-- [Summary CSV](results/experiments/summary.csv)
-- [Raw runs CSV](results/experiments/raw_runs.csv)
+An earlier implementation compared two update counts and three learning rates across five matched seeds, giving 30 runs.
 
-**Version note:** the report and saved results are preserved unchanged from
-the earlier multi-file implementation. Names such as `run_demo`,
-`run_experiments`, and `test_maze` in those historical documents refer to that
-version. The current code replaces those files with `maze_qlearning.m` for
-manual experiments. It keeps the same lecture reward matrix, random sampling,
-and Q-learning update, but does not generate the full comparison report.
-The revised single-file script has not yet been executed in MATLAB.
+All recorded runs produced shortest routes from the five non-exit starting rooms, although Q-value errors varied substantially. This illustrates that correct action ordering can produce optimal routes before the Q-values fully converge.
+
+- [Experiment report](docs/experiments.md)
+- [Summary data](results/experiments/summary.csv)
+- [Individual run data](results/experiments/raw_runs.csv)
+
+These files document the earlier implementation. Commands such as `run_demo`, `run_experiments`, and `test_maze` in that report refer to the previous version and are not available in the current repository. The current single-file script runs one setting at a time and does not regenerate the full comparison report.
+
+## Scope
+
+This is a small, deterministic course exercise. Its results do not establish a generally optimal learning rate or performance on larger or stochastic environments.
+
+The reference Q-table comparison applies only to `gamma = 0.8`. The current single-file script has not yet been verified by execution in MATLAB.
 
 ## Attribution
 
-The maze and reference Q-table come from the course exercise. This project
-was prepared with AI assistance; the saved MATLAB measurements were produced
-by the project owner. The original lecture slides are not redistributed.
+The maze and reference Q-table come from the course exercise. Implementation and documentation were prepared with AI assistance. The saved results come from earlier MATLAB runs performed by the project owner. Original lecture slides are not redistributed.
