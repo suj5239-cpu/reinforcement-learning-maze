@@ -65,7 +65,7 @@ These files document the earlier implementation. Commands such as `run_demo`, `r
 
 This is a small, deterministic course exercise. Its results do not establish a generally optimal learning rate or performance on larger or stochastic environments.
 
-The reference Q-table comparison applies only to `gamma = 0.8`. The current single-file script has not yet been verified by execution in MATLAB.
+The reference Q-table comparison applies only to `gamma = 0.8`.
 
 ## Attribution
 
